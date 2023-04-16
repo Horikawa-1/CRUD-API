@@ -88,7 +88,7 @@ public class UserServiceTest {
   public void 更新処理で存在しないIDを指定されたときに例外をthrowすること() {
     when(userMapper.findById(0)).thenReturn(Optional.empty());
     userServiceImpl.updateUser(0, new UpdateForm());
-    assertThatThrownBy(() -> userServiceImpl.updateUser(0,new UpdateForm()))
+    assertThatThrownBy(() -> userServiceImpl.updateUser(0, new UpdateForm()))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("IDが0のレコードはありません。");
     verify(userMapper).findById(0);
