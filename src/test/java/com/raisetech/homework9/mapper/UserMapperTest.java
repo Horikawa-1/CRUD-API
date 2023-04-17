@@ -78,7 +78,7 @@ class UserMapperTest {
   @DataSet(value = "users.yml")
   @ExpectedDataSet(value = "datasets/expectedAfterDeleteAnime.yml")
   @Transactional
-  public void 指定されたidが存在する時メッセージが削除されること() {
+  public void 指定されたidが存在する時ユーザー情報が削除されること() {
     userMapper.deleteUser(2);
   }
 }
