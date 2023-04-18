@@ -1,20 +1,30 @@
 package com.raisetech.homework9.integrationtest;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
 import com.github.database.rider.spring.api.DBRider;
-import com.raisetech.homework9.mapper.UserMapper;
-import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.Customization;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import org.skyscreamer.jsonassert.comparator.CustomComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,50 +35,178 @@ public class UserRestApiIntegrationTest {
   @Autowired
   MockMvc mockMvc;
 
-  @Autowired
-  UserMapper nameMapper;
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  void ユーザーが全件取得できること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+        .andExpect(status().isOk())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+             [
+                {
+                   "id":1,
+                   "name":"Honma"
+                },
+                {
+                   "id":2,
+                   "name":"Nakashima"
+                },
+                {
+                   "id":3,
+                   "name":"Itou"
+                }
+             ]
+            """
+        , response, JSONCompareMode.STRICT);
+  }
 
   @Test
-  @DataSet(value = "users.yml")
-  @Transactional
-  void ユーザーが取得できること() throws Exception {
-    String response = mockMvc.perform(MockMvcRequestBuilders.get("/api/users"))
-        .andExpect(MockMvcResultMatchers.status().isOk())
+  @DataSet(value = "datasets/empty.yml")
+  void テーブルに何も登録されてない時_空のListとステータスコード200が返されること() throws Exception {
+    String responce = mockMvc.perform(MockMvcRequestBuilders.get("/users"))
+        .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-    JSONAssert.assertEquals("[" +
-        " {" +
-        " \"id\": 1," +
-        " \"name\": \"Honma\"" +
-        " }," +
-        " {" +
-        " \"id\": 2," +
-        " \"name\": \"Nakashima\"" +
-        " }," +
-        " {" +
-        " \"id\": 3," +
-        " \"name\": \"Itou\"" +
-        " }" +
-        "]", response, JSONCompareMode.STRICT);
+
+    JSONAssert.assertEquals("""
+        []
+        """, responce, JSONCompareMode.STRICT);
   }
 
   @Test
   @DataSet(value = "datasets/users.yml")
-  @Transactional
-  void 存在しないIDを指定すると404のステータスコードとエラーのレスポンスを返すこと() throws Exception {
-        /*
-        ステータスコード: 404 Not Found
-        レスポンスボディ:
-            {
-                "message": ユーザーが見つからない場合のメッセージ
-            }
-        */
-    mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 6))
-        .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andExpect(MockMvcResultMatchers.content().json("""
-            {
-            "message": "resource not found"
-            }
-            """));
+  void 指定されたidのユーザーが存在するとき指定されたユーザー情報が返されること() throws Exception {
+    String responce = mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 3))
+        .andExpect(status().isOk())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+        [
+          {
+            "id": 3,
+            "name": "Itou"
+          }
+        ]
+        """, responce, JSONCompareMode.STRICT
+    );
   }
 
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  void 存在しないIDのユーザー情報を取得しようとすると例外がスローされてステータスコード404を返すこと() throws Exception {
+    String responce = mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 0))
+        .andExpect(status().isNotFound())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+               [
+                 {
+                   "path": "/users/0",
+                   "error": "Not Found",
+                   "message": "IDが0のレコードはありません。",
+                   "timestamp": "2023-04-18T14:48:04.911608700+09:00[Asia/Tokyo]",
+                   "status": "404"
+                 }
+               ]
+            """, responce,
+        JSONCompareMode.LENIENT);
+  }
+
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterInsertUser.yml", ignoreCols = "id")
+  @Transactional
+  void 新規ユーザーが登録されること() throws Exception {
+    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name" : "まさのり",
+                    "id" : "4"
+                }
+                """))
+        .andExpect(status().isCreated())
+        .andReturn().getResponse();
+
+    assertThat(response.getContentAsString()).isEqualTo("user successfully created");
+  }
+
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterUpdateUser.yml")
+  @Transactional
+  void 指定したユーザーが存在するとき更新できること() throws Exception {
+    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/2")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name" : "まさのり",
+                    "id" : "2"
+                }
+                """))
+        .andExpect(status().isCreated())
+        .andReturn().getResponse();
+
+    assertThat(response.getContentAsString()).isEqualTo("name successfully updated");
+  }
+
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  void 更新時に指定したIDのユーザーが存在しない場合404エラーとなりエラーのレスポンスを返すこと() throws Exception {
+    String responce = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 0)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":"まさのり",
+                    "id":"0"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                "path": "/users/0",
+                "error": "Not Found",
+                "message": "IDが0のレコードはありません。",
+                "timestamp": "2023-04-18T14:50:45.392249100+09:00[Asia/Tokyo]",
+                "status": "404"
+            }
+                                """, responce,
+        new CustomComparator(JSONCompareMode.LENIENT,
+            new Customization("timestamp", (o1, o2) -> true)));
+
+  }
+
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterDeleteUser.yml")
+  void 指定したユーザー情報が削除できること() throws Exception {
+    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete("/users/2")
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+        .andExpect(status().isCreated())
+        .andReturn().getResponse();
+
+    assertThat(response.getContentAsString()).isEqualTo("user successfully deleted");
+  }
+
+  @Test
+  @DataSet(value = "datasets/users.yml")
+  void 削除時に指定したIDのユーザーが存在しない場合404エラーとなりエラーのレスポンスを返すこと() throws Exception {
+    String responce = mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", 0))
+        .andExpect(MockMvcResultMatchers.status().isNotFound())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                "path": "/users/0",
+                "error": "Not Found",
+                "message": "IDが0のレコードはありません。",
+                "timestamp": "2023-04-18T14:51:37.677934400+09:00[Asia/Tokyo]",
+                "status": "404"
+            }
+                                """, responce,
+        new CustomComparator(JSONCompareMode.LENIENT,
+            new Customization("timestamp", (o1, o2) -> true)));
+  }
 }
