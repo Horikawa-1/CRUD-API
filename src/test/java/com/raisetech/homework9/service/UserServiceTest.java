@@ -32,7 +32,7 @@ public class UserServiceTest {
   UserMapper userMapper;
 
   @Test
-  public void すべてのメッセージが返されること() {
+  public void 全てのユーザー情報が返されること() {
     doReturn(List.of(new User(1, "Honma"), new User(2, "Nakashima"), new User(3, "Itou"))).when(
         userMapper).findAll();
 
