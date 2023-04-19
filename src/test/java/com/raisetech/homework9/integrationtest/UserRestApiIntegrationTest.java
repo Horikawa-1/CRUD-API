@@ -153,7 +153,7 @@ public class UserRestApiIntegrationTest {
                  "instance": "/users"
             }
                     """, response,
-        new CustomComparator(JSONCompareMode.LENIENT));
+        JSONCompareMode.LENIENT);
   }
 
   @Test
