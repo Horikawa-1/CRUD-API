@@ -132,6 +132,81 @@ public class UserRestApiIntegrationTest {
   }
 
   @Test
+  void 登録処理でnameが21文字以上のときエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":"123456789012345678901",
+                    "id":"4"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                 "type": "about:blank",
+                 "title": "Bad Request",
+                 "status": 400,
+                 "detail": "Invalid request content.",
+                 "instance": "/users"
+            }
+                    """, response,
+        JSONCompareMode.LENIENT);
+  }
+
+  @Test
+  void 登録処理でnameが空文字だったとき登録せずエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":"",
+                    "id":"4"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                "type": "about:blank",
+                "title": "Bad Request",
+                "status": 400,
+                "detail": "Invalid request content.",
+                "instance": "/users"
+            }
+                                """, response,
+        new CustomComparator(JSONCompareMode.LENIENT));
+  }
+
+  @Test
+  void 登録処理でnameがnullだったとき登録せずエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":null,
+                    "id":"4"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                "type": "about:blank",
+                "title": "Bad Request",
+                "status": 400,
+                "detail": "Invalid request content.",
+                "instance": "/users"
+            }
+                    """, response,
+        new CustomComparator(JSONCompareMode.LENIENT));
+  }
+
+  @Test
   @DataSet(value = "datasets/users.yml")
   @ExpectedDataSet(value = "datasets/expectedAfterUpdateUser.yml")
   @Transactional
@@ -149,6 +224,7 @@ public class UserRestApiIntegrationTest {
 
     assertThat(response.getContentAsString()).isEqualTo("name successfully updated");
   }
+
 
   @Test
   @DataSet(value = "datasets/users.yml")
@@ -175,7 +251,81 @@ public class UserRestApiIntegrationTest {
                                 """, responce,
         new CustomComparator(JSONCompareMode.LENIENT,
             new Customization("timestamp", (o1, o2) -> true)));
+  }
 
+  @Test
+  void 更新処理でnameが21文字以上のとき更新せずエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 2)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":"123456789012345678901",
+                    "id":"4"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                    "type": "about:blank",
+                    "title": "Bad Request",
+                    "status": 400,
+                    "detail": "Invalid request content.",
+                    "instance": "/users/2"
+            }
+            """, response,
+        new CustomComparator(JSONCompareMode.LENIENT));
+  }
+
+  @Test
+  void 更新処理でnameがnullだったとき更新せずエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 2)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":null,
+                    "id":"2"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                    "type": "about:blank",
+                    "title": "Bad Request",
+                    "status": 400,
+                    "detail": "Invalid request content.",
+                    "instance": "/users/2"
+            }
+                    """, response,
+        new CustomComparator(JSONCompareMode.LENIENT));
+  }
+
+  @Test
+  void 更新処理でnameが空文字だったとき更新せずエラーメッセージが返されること() throws Exception {
+    String response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 2)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content("""
+                {
+                    "name":"",
+                    "id":"2"
+                }
+                """))
+        .andExpect(MockMvcResultMatchers.status().isBadRequest())
+        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+    JSONAssert.assertEquals("""
+            {
+                    "type": "about:blank",
+                    "title": "Bad Request",
+                    "status": 400,
+                    "detail": "Invalid request content.",
+                    "instance": "/users/2"
+            }
+                    """, response,
+        new CustomComparator(JSONCompareMode.LENIENT));
   }
 
   @Test
