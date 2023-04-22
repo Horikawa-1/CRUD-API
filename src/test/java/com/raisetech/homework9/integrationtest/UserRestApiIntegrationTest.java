@@ -251,7 +251,6 @@ public class UserRestApiIntegrationTest {
                                 """, responce,
         new CustomComparator(JSONCompareMode.LENIENT,
             new Customization("timestamp", (o1, o2) -> true)));
-
   }
 
   @Test
