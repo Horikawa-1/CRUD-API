@@ -13,7 +13,6 @@ import com.raisetech.homework9.entity.UpdateForm;
 import com.raisetech.homework9.entity.User;
 import com.raisetech.homework9.exception.ResourceNotFoundException;
 import com.raisetech.homework9.mapper.UserMapper;
-import com.raisetech.homework9.service.UserServiceImpl;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
-drop table IF EXISTS names;
+drop table IF EXISTS users;
 
-create TABLE names (
+create TABLE users (
  id int unsigned AUTO_INCREMENT,
  name VARCHAR(20) NOT NULL,
  PRIMARY KEY(id)
 );
 
 
-insert into names (name) values ("本間");
-insert into names (name) values ("中嶋");
-insert into names (name) values ("伊藤");
+insert into users (name) values ("Honma");
+insert into users (name) values ("Nakashima");
+insert into users (name) values ("Itou");

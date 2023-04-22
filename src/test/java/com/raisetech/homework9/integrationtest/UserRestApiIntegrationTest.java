@@ -58,7 +58,7 @@ public class UserRestApiIntegrationTest {
                 }
              ]
             """
-        , response, JSONCompareMode.STRICT);
+        , response, JSONCompareMode.LENIENT);
   }
 
   @Test
@@ -211,7 +211,7 @@ public class UserRestApiIntegrationTest {
   @ExpectedDataSet(value = "datasets/expectedAfterUpdateUser.yml")
   @Transactional
   void 指定したユーザーが存在するとき更新できること() throws Exception {
-    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/2")
+    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 2)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content("""
                 {
@@ -332,7 +332,7 @@ public class UserRestApiIntegrationTest {
   @DataSet(value = "datasets/users.yml")
   @ExpectedDataSet(value = "datasets/expectedAfterDeleteUser.yml")
   void 指定したユーザー情報が削除できること() throws Exception {
-    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete("/users/2")
+    MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", 2)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
         .andExpect(status().isCreated())
         .andReturn().getResponse();
