@@ -1,24 +1,66 @@
-name: CRUDTest-CI
+name: CRUD-CI
 
-on: [ push ]
+on: [ pull_request ]
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Show ubuntu details
+        run: lsb_release -a
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run Docker
+        run: docker compose up -d
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
-      - name: docker container build
-        run: docker compose up -d
-      - name: gradle build
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build
+          distribution: 'adopt'
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Conduct Tests
+        run: ./gradlew test
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+
+      - name: Run Checkstyle
+        uses: nikitasavinov/checkstyle-action@master
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: 'github-pr-check'
+          tool_name: 'reviewdog'
+          checkstyle_config: 'config/checkstyle/checkstyle.xml'
+          workdir: 'src/main'
+          level: warning
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Run SpotBugs
+        run: ./gradlew spotbugsMain
+        if: always()
+
+      - name: Upload SpotBugs Report
+        uses: actions/upload-artifact@v3.1.2
+        if: always()
+        with:
+          name: SpotBugsTestReport
+          path: build/reports/spotbugs/main.html
