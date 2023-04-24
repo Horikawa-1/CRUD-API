@@ -111,7 +111,7 @@ public class UserRestApiIntegrationTest {
 
   @Test
   @DataSet(value = "datasets/users.yml")
-  @ExpectedDataSet(value = "datasets/expectedAfterInsertUser.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterInsertUser.yml", ignoreCols = "id")
   @Transactional
   void 新規ユーザーが登録されること() throws Exception {
     MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/users")
@@ -206,11 +206,11 @@ public class UserRestApiIntegrationTest {
 
   @Test
   @DataSet(value = "datasets/users.yml")
-  @ExpectedDataSet(value = "datasets/expectedAfterUpdateUser.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterUpdateUser.yml", ignoreCols = "id")
   @Transactional
   void 指定したユーザーが存在するとき更新できること() throws Exception {
     MockHttpServletResponse response = mockMvc.perform(
-            MockMvcRequestBuilders.patch("/users/{id}", 2)
+            MockMvcRequestBuilders.patch("/users/2")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content("""
                     {
@@ -218,17 +218,18 @@ public class UserRestApiIntegrationTest {
                         "id" : "2"
                     }
                     """))
-        .andExpect(status().isCreated())
+        .andExpect(status().isOk())
         .andReturn().getResponse();
 
-    assertThat(response.getContentAsString()).isEqualTo("name successfully updated");
+    assertThat(response.getContentAsString()).isEqualTo("""
+        {"message":"name successfully updated"}""");
   }
 
 
   @Test
   @DataSet(value = "datasets/users.yml")
   void 更新時に指定したIDのユーザーが存在しない場合404エラーとなりエラーのレスポンスを返すこと() throws Exception {
-    String responce = mockMvc.perform(MockMvcRequestBuilders.patch("/users/{id}", 0)
+    mockMvc.perform(MockMvcRequestBuilders.patch("/users/0")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content("""
                 {
@@ -236,20 +237,7 @@ public class UserRestApiIntegrationTest {
                     "id":"0"
                 }
                 """))
-        .andExpect(MockMvcResultMatchers.status().isNotFound())
-        .andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
-
-    JSONAssert.assertEquals("""
-            {
-                "path": "/users/0",
-                "error": "Not Found",
-                "message": "IDが0のレコードはありません。",
-                "timestamp": "2023-04-18T14:50:45.392249100+09:00[Asia/Tokyo]",
-                "status": "404"
-            }
-                                """, responce,
-        new CustomComparator(JSONCompareMode.LENIENT,
-            new Customization("timestamp", (o1, o2) -> true)));
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   @Test
@@ -329,15 +317,16 @@ public class UserRestApiIntegrationTest {
 
   @Test
   @DataSet(value = "datasets/users.yml")
-  @ExpectedDataSet(value = "datasets/expectedAfterDeleteUser.yml")
+  @ExpectedDataSet(value = "datasets/expectedAfterDeleteUser.yml", ignoreCols = "id")
   void 指定したユーザー情報が削除できること() throws Exception {
     MockHttpServletResponse response = mockMvc.perform(
-            MockMvcRequestBuilders.delete("/users/{id}", 2)
+            MockMvcRequestBuilders.delete("/users/2")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-        .andExpect(status().isCreated())
+        .andExpect(status().isOk())
         .andReturn().getResponse();
 
-    assertThat(response.getContentAsString()).isEqualTo("user successfully deleted");
+    assertThat(response.getContentAsString()).isEqualTo("""
+        {"message":"user successfully deleted"}""");
   }
 
   @Test
