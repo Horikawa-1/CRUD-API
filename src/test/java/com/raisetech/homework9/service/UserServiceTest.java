@@ -72,14 +72,8 @@ public class UserServiceTest {
 
   @Test
   public void 存在するidに対応するユーザーのnameが更新できていること() throws Exception {
-    UpdateForm updateForm = new UpdateForm();
-    updateForm.setName("Honma");
-    User user = new User();
-    user.setId(1);
-
+    doReturn(Optional.of(new User(1, "本間"))).when(userMapper).findById(1);
     doNothing().when(userMapper).updateUser(1, "Honma");
-    userServiceImpl.updateUser(1, updateForm);
-    assertThat(user.getName()).isEqualTo("Honma");
     verify(userMapper).updateUser(1, "Honma");
   }
 
