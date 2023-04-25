@@ -53,8 +53,3 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-      - name: Run SpotBugs
-        run: ./gradlew spotbugsMain
-        if: always()
-/reports/spotbugs/main.html
