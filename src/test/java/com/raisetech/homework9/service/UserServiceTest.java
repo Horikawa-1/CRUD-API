@@ -3,10 +3,10 @@ package com.raisetech.homework9.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import com.raisetech.homework9.entity.CreateForm;
 import com.raisetech.homework9.entity.UpdateForm;
@@ -74,21 +74,21 @@ public class UserServiceTest {
   public void 存在するidに対応するユーザーのnameが更新できていること() throws Exception {
     doReturn(Optional.of(new User(1, "本間"))).when(userMapper).findById(1);
     doNothing().when(userMapper).updateUser(1, "Honma");
+
+    userServiceImpl.updateUser(1, new UpdateForm(1, "Honma"));
+
     verify(userMapper).updateUser(1, "Honma");
   }
 
   @Test
   public void 更新処理で存在しないIDを指定されたときに例外をthrowすること() {
-    when(userMapper.findById(0)).thenReturn(Optional.empty());
-    userServiceImpl.updateUser(0, new UpdateForm());
-    assertThatThrownBy(() -> userServiceImpl.updateUser(0, new UpdateForm()))
-        .isInstanceOf(ResourceNotFoundException.class)
-        .hasMessage("IDが0のレコードはありません。");
+    assertThrows(ResourceNotFoundException.class, () -> userServiceImpl.updateUser(0, new UpdateForm(0, "まさのり")));
     verify(userMapper).findById(0);
   }
 
   @Test
   public void 存在するidに対応するユーザー情報が正常に削除できていること() {
+    doReturn(Optional.of(new User(1, "Honma"))).when(userMapper).findById(1);
     doNothing().when(userMapper).deleteUser(1);
     userServiceImpl.deleteUser(1);
     verify(userMapper).deleteUser(1);
