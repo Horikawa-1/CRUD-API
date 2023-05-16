@@ -1,6 +1,6 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD機能を実装しています。  
+idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト、結合テスト、Github ActionsでのCIも実装しています。
 
 ---
 ## 構成要件
@@ -9,6 +9,8 @@ idとnameの情報でユーザーを管理する機能を持ったAPIを作成�
 * MySQL 8.0.32
 * Docker Desktop 4.17.1
 * JUnit 5.9.1
+* Mockito
+* MockMvc
 ---
 # 起動手順
 ```  
@@ -26,7 +28,7 @@ docker compose down
 |カラム名（論理名）|カラム名（物理名）|型・桁|Nullable|その他コメント|
 |---|---|---|---|---|
 |ID|id|int|NO|primary key, auto_increment|
-|名前|name|varchar(20)|NO|  
+|名前|name|varchar(20)|NO|null、空文字、全て半角・全角スペース、タブは受け付けない  
 
 ---
 
