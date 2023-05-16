@@ -1,6 +1,6 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト、結合テスト、Github ActionsでのCIも実装しています。
+idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理と例外処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト、結合テスト、Github ActionsでのCIも実装しています。
 
 ---
 ## 構成要件
@@ -43,19 +43,6 @@ docker compose down
 
 ---
 # スクリーンショットと例外処理
-
-<details>
-<summary><h4> 1. GET /users </h4></summary>
-
-![GET:/usersでレコード一覧を取得](https://user-images.githubusercontent.com/111167638/231456474-b2b32d2d-3c6b-45bb-8424-b14c1d136553.png)
-</details>
-
-
-<details>
-<summary><h4> 2-1. GET /todos/{id} </h4></summary>
-
-![GET:/todos{id}で特定のタスクを１件取得した時のJSON結果](https://user-images.githubusercontent.com/111167638/231457801-1d3dfaad-f847-49ce-ab35-2eca4d6d7c93.png)
-</details>
 
 
 * GETでlocalhost:8080/usersでUserControllerクラスのgetUsersメソッドより、データベースの全レコードが返されます。
