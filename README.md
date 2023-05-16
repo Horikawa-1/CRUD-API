@@ -1,7 +1,6 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。
-READ・CREATE・UPDATE・DELETE機能を実装しています。  
+idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理と例外処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト、結合テスト、Github ActionsでのCIも実装しています。
 
 ---
 ## 構成要件
@@ -10,6 +9,8 @@ READ・CREATE・UPDATE・DELETE機能を実装しています。
 * MySQL 8.0.32
 * Docker Desktop 4.17.1
 * JUnit 5.9.1
+* Mockito
+* MockMvc
 ---
 # 起動手順
 ```  
@@ -27,7 +28,7 @@ docker compose down
 |カラム名（論理名）|カラム名（物理名）|型・桁|Nullable|その他コメント|
 |---|---|---|---|---|
 |ID|id|int|NO|primary key, auto_increment|
-|名前|name|varchar(20)|NO|  
+|名前|name|varchar(20)|NO|null、空文字、全て半角・全角スペース、タブは受け付けない  
 
 ---
 
@@ -42,19 +43,6 @@ docker compose down
 
 ---
 # スクリーンショットと例外処理
-
-<details>
-<summary><h4> 1. GET /users </h4></summary>
-
-![GET:/usersでレコード一覧を取得](https://user-images.githubusercontent.com/111167638/231456474-b2b32d2d-3c6b-45bb-8424-b14c1d136553.png)
-</details>
-
-
-<details>
-<summary><h4> 2-1. GET /todos/{id} </h4></summary>
-
-![GET:/todos{id}で特定のタスクを１件取得した時のJSON結果](https://user-images.githubusercontent.com/111167638/231457801-1d3dfaad-f847-49ce-ab35-2eca4d6d7c93.png)
-</details>
 
 
 * GETでlocalhost:8080/usersでUserControllerクラスのgetUsersメソッドより、データベースの全レコードが返されます。
