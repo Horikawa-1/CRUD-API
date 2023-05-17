@@ -1,11 +1,12 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理と例外処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト(Database Riderを使用)、結合テスト、Github ActionsでのCIも実装しています。
+idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。MyBatisでCRUD処理と例外処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト(Database Riderを使用)、結合テスト、Github ActionsでのCIも実装しています。
 
 ---
 ## 構成要件
 * Java 17
 * Spring Framework 3.0.1
+* MyBatis
 * MySQL 8.0.32
 * Docker Desktop 4.17.1
 * JUnit 5.9.1
