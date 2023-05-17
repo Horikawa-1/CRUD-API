@@ -12,6 +12,7 @@ idとnameの情報でユーザーを管理する機能を持ったAPIを作成�
 * Mockito
 * Database Rider
 * MockMvc
+* GitHub Actions
 ---
 # 起動手順
 ```  
