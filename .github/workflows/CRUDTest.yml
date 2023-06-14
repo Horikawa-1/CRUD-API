@@ -1,6 +1,6 @@
 name: CRUD-CI
 
-on: [ pull_request ]
+on: [ push ]
 
 permissions:
   contents: read

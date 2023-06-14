@@ -1,16 +1,19 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。CRUD処理と例外処理を実装しています。DockerでMySQLコンテナを立ち上げて使います。単体テスト、DBテスト、結合テスト、Github ActionsでのCIも実装しています。
+idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。MyBatisでCRUD処理と、指定したIDがない時・バリデーションエラー用の例外処理を実装しています。Spring Testを使った単体テスト、Database Riderを使ったDBテスト、MocbMvcを使った結合テスト、Github ActionsでのCIを実装しています。DockerでMySQLコンテナを立ち上げて使います。
 
 ---
 ## 構成要件
 * Java 17
 * Spring Framework 3.0.1
+* MyBatis
 * MySQL 8.0.32
 * Docker Desktop 4.17.1
 * JUnit 5.9.1
 * Mockito
+* Database Rider
 * MockMvc
+* GitHub Actions
 ---
 # 起動手順
 ```  
@@ -90,3 +93,19 @@ docker compose down
 ![スクリーンショット (256)](https://user-images.githubusercontent.com/111167638/228145312-31323526-4480-4d36-8df8-953d69f6f75a.png)
 
 ![スクリーンショット (257)](https://user-images.githubusercontent.com/111167638/228145325-72e07046-8b9d-4b3e-af47-2a8d2814f3df.png)
+
+* 単体テストの結果です。
+
+![スクリーンショット (320)](https://github.com/Horikawa-1/last-homework-test-code-2/assets/111167638/8f303191-9861-4444-b641-ad708880514c)
+
+* DBテストの結果です。
+
+![スクリーンショット (321)](https://github.com/Horikawa-1/last-homework-test-code-2/assets/111167638/14f7e8c7-a5ed-4f5e-9cd6-27b78f695a85)
+
+* 結合テストの結果です。
+
+![スクリーンショット (323)](https://github.com/Horikawa-1/last-homework-test-code-2/assets/111167638/7515cdee-407d-4fb3-92af-0a08cc995a99)
+
+* GitHub Actionsの結果です。
+
+![スクリーンショット (317)](https://github.com/Horikawa-1/last-homework-test-code-2/assets/111167638/b2d9ff80-a521-47ae-8f68-1fc762fa6e46)
