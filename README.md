@@ -1,6 +1,6 @@
 # APIの概要
 
-idとnameの情報でユーザーを管理する機能を持ったAPIを作成しました。MyBatisでCRUD処理と、指定したIDがない時・バリデーションエラー用の例外処理を実装しています。Spring Testを使った単体テスト、Database Riderを使ったDBテスト、MocbMvcを使った結合テスト、Github ActionsでのCIを実装しています。DockerでMySQLコンテナを立ち上げて使います。
+idとnameのCRUD処理をするAPIを作成しました。MyBatisでCRUD処理と、指定したIDがない時・バリデーションエラー用の例外処理を実装しています。Spring Testを使った単体テスト、Database Riderを使ったDBテスト、MocbMvcを使った結合テスト、Github ActionsでのCIを実装しています。DockerでMySQLコンテナを立ち上げて使います。スクリーンショットはAWSのEC2とRDSを接続してデプロイしたときのものを使用しています。
 
 ---
 ## 構成要件
@@ -50,49 +50,62 @@ docker compose down
 
 * GETでlocalhost:8080/usersでUserControllerクラスのgetUsersメソッドより、データベースの全レコードが返されます。
 
-![スクリーンショット (213)](https://user-images.githubusercontent.com/111167638/224325106-2db72af1-7d64-49a5-a861-a1d964dac88b.png)
+![スクリーンショット (330)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/3fae3b3d-b1fa-4182-9b05-fc97ee1110ee)
 
-* GETでlocalhost:8080/users/{id}でgetUserByIdメソッドより、指定したIDのレコードが返されます。以下ID5の例です。
 
-![image](https://user-images.githubusercontent.com/111167638/224325592-961ffb8c-753e-478c-8f90-6b963ec09355.png)
+* GETでlocalhost:8080/users/{id}でgetUserByIdメソッドより、指定したIDのレコードが返されます。以下IDが2の例です。
 
-* getUserByIdメソッドで指定されたIDがテーブルになかった場合、例外処理で 「"message": "IDが{指定されたID}のレコードはありません。"」、ステータスコード404が返されます。以下、ID6の例です。
+![スクリーンショット (331)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ca8383a7-f9ec-4567-980d-0ccfb93129cc)
 
-![スクリーンショット (221)](https://user-images.githubusercontent.com/111167638/224542421-1b0b268d-48af-4a27-8abf-a8a8f96b7fe8.png)
 
-* POSTでlocalhost:8080/usersでCreateUserメソッドより、入力されたnameの値が新しくレコードに追加されます。ただし、nameの値がnull、空文字、21字以上の時はエラーになります。以下ID6のレコードを追加したスクリーンショットです。
+* getUserByIdメソッドで指定されたIDがテーブルになかった場合、例外処理で 「"message": "IDが{指定されたID}のレコードはありません。"」、ステータスコード404が返されます。以下、IDが4の例です。
 
-![スクリーンショット (241)](https://user-images.githubusercontent.com/111167638/228142098-75995790-4747-423f-914a-548a0da96ed2.png)
+![スクリーンショット (332)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/124ed02a-dd80-4111-b353-331ecd0b9852)
 
-![スクリーンショット (242)](https://user-images.githubusercontent.com/111167638/228142130-34c89095-2901-476a-9828-3af215d2b3be.png)
+
+* POSTでlocalhost:8080/usersでCreateUserメソッドより、入力されたnameの値が新しくレコードに追加されます。ただし、nameの値がnull、空文字、21字以上の時はエラーになります。以下IDが4のレコードを追加したスクリーンショットです。
+
+![スクリーンショット (333)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ba1b4e98-19a5-4565-b978-dcbc092631b8)
+
+
+![スクリーンショット (334)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/f6ef3e8e-4a8c-4aa3-8eaf-9eb17c745d0b)
+
 
 * 以下nameの値がnull、空白、19,20,21字の場合のスクリーンショットです。
 
-![スクリーンショット (243)](https://user-images.githubusercontent.com/111167638/228142883-fae4e0ca-f538-488a-995a-73568a8221cc.png)
+![スクリーンショット (335)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/b57a0bda-45ac-4402-ae3e-18b169ba3628)
 
-![スクリーンショット (244)](https://user-images.githubusercontent.com/111167638/228142806-b2007674-cc13-4eb6-bd47-8e95e3b3decc.png)
 
-![スクリーンショット (245)](https://user-images.githubusercontent.com/111167638/228143084-63180150-6d45-4ece-b0da-c809af998fea.png)
+![スクリーンショット (336)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/8a5965dd-47fe-4e22-9f79-a69775e6ed92)
 
-![スクリーンショット (246)](https://user-images.githubusercontent.com/111167638/228143117-12f09455-3262-4daa-817a-f39dcf4c4b06.png)
 
-![スクリーンショット (247)](https://user-images.githubusercontent.com/111167638/228143049-61fb7c18-c5f8-44f7-839c-8f181568fd34.png)
+![スクリーンショット (337)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/697248e0-7090-4cb7-81fd-091555e58309)
 
-* PATCHでlocalhost:8080/users/{id}でupdateNameメソッドより、指定したIDのレコードのnameを更新できます。以下ID11のレコードを更新する例です。
 
-![スクリーンショット (248)](https://user-images.githubusercontent.com/111167638/228144287-b4fb0855-6704-4d16-a25f-c2f6e540cc85.png)
+![スクリーンショット (338)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/b0a8142a-dc75-4aaf-be15-802ade1594c1)
 
-![スクリーンショット (249)](https://user-images.githubusercontent.com/111167638/228144309-ccf87ccc-0a0a-47b5-9b9f-0f5fc1d4d31f.png)
 
-![スクリーンショット (250)](https://user-images.githubusercontent.com/111167638/228144265-8032fa11-5eac-485d-9ed5-b6d7d19bd3c9.png)
+![スクリーンショット (339)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/57fda7b7-04a9-418d-9fed-8669c2863e62)
 
-* DELETEでlocalhost:8080/users/{id}でdeleteUserメソッドより、指定したIDのレコードを消去できます。以下ID11のレコードを消去する例です。
 
-![スクリーンショット (255)](https://user-images.githubusercontent.com/111167638/228145299-6569aa49-9266-4369-b6d3-46a63f2a5de2.png)
+* PATCHでlocalhost:8080/users/{id}でupdateNameメソッドより、指定したIDのレコードのnameを更新できます。以下IDが6のレコードを更新する例です。
 
-![スクリーンショット (256)](https://user-images.githubusercontent.com/111167638/228145312-31323526-4480-4d36-8df8-953d69f6f75a.png)
+![スクリーンショット (341)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ab338ebc-2e48-4c64-9361-c6d4309d4220)
 
-![スクリーンショット (257)](https://user-images.githubusercontent.com/111167638/228145325-72e07046-8b9d-4b3e-af47-2a8d2814f3df.png)
+
+![スクリーンショット (342)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/eebf191a-c066-4794-91c6-31c91a834208)
+
+
+![スクリーンショット (343)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/af73620d-48de-4e80-9e36-c4be33a8d330)
+
+
+* DELETEでlocalhost:8080/users/{id}でdeleteUserメソッドより、指定したIDのレコードを消去できます。以下IDが5のレコードを消去する例です。
+
+![スクリーンショット (344)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/044c5548-85a5-4386-9901-219c065cf0b0)
+
+
+![スクリーンショット (345)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/a710ef08-2131-445e-aec3-c103c7ab43b4)
+
 
 * 単体テストの結果です。
 
