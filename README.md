@@ -45,7 +45,7 @@ docker compose down
 | レコードの削除 | deleteUser(int id) |DELETE| http\://localhost:8080/users/{id} |
 
 ---
-# スクリーンショットと例外処理
+# スクリーンショットとバリデーション
 
 
 *起動時
