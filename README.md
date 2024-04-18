@@ -35,25 +35,30 @@ docker compose down
 
 ---
 
-# 機能一覧
-| No | 画面名／機能名     | メソッド名 | HTTPリクエストの種類 | URL          | 
-|-------------|-------------| ------------ |-----------------|-----------------| 
-| 1 | レコード一覧取得     | findAll() |GET|http://localhost:8080/users      |
-| 2 | 指定したIDのレコードを取得 | findById(int id) |GET|  http://localhost:8080/users/{id}  |
-| 3 | レコードの新規登録 | createUser(CreateForm form) |POST| http://localhost:8080/users |
-| 4 | 指定したレコードのnameの更新 | updateName(int id, UpdateForm form) |PATCH| http://localhost:8080/users/{id} |
-| 5 | レコードの削除 | deleteUser(int id) |DELETE| http://localhost:8080/users/{id} |
+# URL設計
+| 機能     | メソッド名 | HTTPリクエストの種類 | URL          | 
+|-------------| ------------ |-----------------|-----------------|
+| レコード一覧取得     | findAll() |GET|http\://localhost:8080/users      |
+| 指定したIDのレコードを取得 | findById(int id) |GET|  http\://localhost:8080/users/{id}  |
+| レコードの新規登録 | createUser(CreateForm form) |POST| http\://localhost:8080/users |
+| 指定したレコードのnameの更新 | updateName(int id, UpdateForm form) |PATCH| http\://localhost:8080/users/{id} |
+| レコードの削除 | deleteUser(int id) |DELETE| http\://localhost:8080/users/{id} |
 
 ---
 # スクリーンショットと例外処理
 
 
-* GETでlocalhost:8080/usersでUserControllerクラスのgetUsersメソッドより、データベースの全レコードが返されます。
+*起動時
+
+![スクリーンショット (346)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/80c61180-9b4d-40dc-a190-0218567b71c0)
+
+
+* GETでhttp\://localhost:8080/usersでUserControllerクラスのgetUsersメソッドより、データベースの全レコードが返されます。
 
 ![スクリーンショット (330)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/3fae3b3d-b1fa-4182-9b05-fc97ee1110ee)
 
 
-* GETでlocalhost:8080/users/{id}でgetUserByIdメソッドより、指定したIDのレコードが返されます。以下IDが2の例です。
+* GETでhttp\://localhost:8080/users/{id}でgetUserByIdメソッドより、指定したIDのレコードが返されます。以下IDが2の例です。
 
 ![スクリーンショット (331)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ca8383a7-f9ec-4567-980d-0ccfb93129cc)
 
@@ -63,7 +68,7 @@ docker compose down
 ![スクリーンショット (332)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/124ed02a-dd80-4111-b353-331ecd0b9852)
 
 
-* POSTでlocalhost:8080/usersでCreateUserメソッドより、入力されたnameの値が新しくレコードに追加されます。ただし、nameの値がnull、空文字、21字以上の時はエラーになります。以下IDが4のレコードを追加したスクリーンショットです。
+* POSTでhttp\://localhost:8080/usersでCreateUserメソッドより、入力されたnameの値が新しくレコードに追加されます。ただし、nameの値がnull、空文字、21字以上の時はエラーになります。以下IDが4のレコードを追加したスクリーンショットです。
 
 ![スクリーンショット (333)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ba1b4e98-19a5-4565-b978-dcbc092631b8)
 
@@ -88,7 +93,7 @@ docker compose down
 ![スクリーンショット (339)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/57fda7b7-04a9-418d-9fed-8669c2863e62)
 
 
-* PATCHでlocalhost:8080/users/{id}でupdateNameメソッドより、指定したIDのレコードのnameを更新できます。以下IDが6のレコードを更新する例です。
+* PATCHでhttp\://localhost:8080/users/{id}でupdateNameメソッドより、指定したIDのレコードのnameを更新できます。以下IDが6のレコードを更新する例です。
 
 ![スクリーンショット (341)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/ab338ebc-2e48-4c64-9361-c6d4309d4220)
 
@@ -99,7 +104,7 @@ docker compose down
 ![スクリーンショット (343)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/af73620d-48de-4e80-9e36-c4be33a8d330)
 
 
-* DELETEでlocalhost:8080/users/{id}でdeleteUserメソッドより、指定したIDのレコードを消去できます。以下IDが5のレコードを消去する例です。
+* DELETEでhttp\://localhost:8080/users/{id}でdeleteUserメソッドより、指定したIDのレコードを消去できます。以下IDが5のレコードを消去する例です。
 
 ![スクリーンショット (344)](https://github.com/Horikawa-1/CRUD-API/assets/111167638/044c5548-85a5-4386-9901-219c065cf0b0)
 
